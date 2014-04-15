@@ -6,7 +6,7 @@ from sys import path
 
 # set environment variables
 here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
-DIRECTORY_ROOT = here("../..")
+DIRECTORY_ROOT = here("../../..")
 settings_file = "variables.json"
 with open(os.path.join(DIRECTORY_ROOT, settings_file)) as settings_file:
     for k, v in json.load(settings_file).items():
