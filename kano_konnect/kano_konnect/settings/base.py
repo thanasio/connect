@@ -1,9 +1,20 @@
 """Common settings and globals."""
-
-
+import json
+import os
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 
+# set environment variables
+here = lambda *x: os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+DIRECTORY_ROOT = here("../..")
+settings_file = "variables.json"
+with open(os.path.join(DIRECTORY_ROOT, settings_file)) as settings_file:
+    for k, v in json.load(settings_file).items():
+        os.environ[k] = v
+
+# type safety!
+DEBUG = os.getenv("DEBUG") == "True"
+PRODUCTION = os.getenv("STAGING") == "False"
 
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
