@@ -3,3 +3,4 @@
 variables.json
 */*.pyc
 *.db
+venv

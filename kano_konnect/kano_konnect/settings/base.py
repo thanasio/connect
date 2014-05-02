@@ -12,13 +12,15 @@ with open(os.path.join(DIRECTORY_ROOT, settings_file)) as settings_file:
     for k, v in json.load(settings_file).items():
         os.environ[k] = v
 
+
 # type safety!
 DEBUG = os.getenv("DEBUG") == "True"
 PRODUCTION = os.getenv("STAGING") == "False"
 
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
-DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+#DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+DJANGO_ROOT = dirname(dirname(dirname(abspath(__file__))))
 
 # Absolute filesystem path to the top-level project folder:
 SITE_ROOT = dirname(DJANGO_ROOT)
@@ -44,20 +46,19 @@ TEMPLATE_DEBUG = DEBUG
 ########## MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ('Your Name', 'your_email@example.com'),
+    ('George London', 'george.j.london@gmail.com'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 ########## END MANAGER CONFIGURATION
 
-
 ########## DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.',
-        'NAME': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': normpath(join(DJANGO_ROOT, 'default.db')),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -69,7 +70,7 @@ DATABASES = {
 
 ########## GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'Africa/Lagos'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = 'en-us'
@@ -122,7 +123,7 @@ STATICFILES_FINDERS = (
 ########## SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # Note: This key should only be used for development and testing.
-SECRET_KEY = r"!+y2*ik)74e!im)td8i!9rgq^64lf&hdm0gwfv^yprq3kbf&pa"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ########## END SECRET CONFIGURATION
 
 
@@ -212,6 +213,7 @@ THIRD_PARTY_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    "kano_konnect",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -256,3 +258,8 @@ LOGGING = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
+
+## CELERY CONFIG##
+#CELERY_RESULT_BACKEND = 'amqp'
+#CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
+## END CELERY CONFIG ##

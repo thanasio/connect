@@ -50,7 +50,24 @@ SERVER_EMAIL = EMAIL_HOST_USER
 ########## END EMAIL CONFIGURATION
 
 ########## DATABASE CONFIGURATION
-DATABASES = {}
+#DATABASES = {}
+
+POSTGRES_PASS = os.getenv("POSTGRES_PASS")
+POSTGRES_IP = os.getenv("POSTGRES_IP")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_USER = os.getenv("DATABASE_USER")
+# using postgres pool from https://github.com/kennethreitz/django-postgrespool
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2", # Add "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle".
+        "NAME": DATABASE_NAME, # Or path to database file if using sqlite3.
+        "USER": "postgres", # Not used with sqlite3.
+        "PASSWORD": POSTGRES_PASS, # Not used with sqlite3.
+        "HOST": POSTGRES_IP, # Set to empty string for localhost. Not used with sqlite3.
+        "PORT": "5432", # Set to empty string for default. Not used with sqlite3.
+    }
+}
 ########## END DATABASE CONFIGURATION
 
 
@@ -69,5 +86,3 @@ CACHES = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = get_env_setting('SECRET_KEY')
 ########## END SECRET CONFIGURATION
-
-DEBUG = True
