@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from kano_konnect import tasks
+import kano_konnect.tasks as tasks
 
 __author__ = 'rogueleaderr'
 

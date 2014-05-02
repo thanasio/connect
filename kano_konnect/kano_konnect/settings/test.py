@@ -1,6 +1,4 @@
-import sys
 from base import *
-from django.test.utils import setup_test_environment
 
 DEBUG = True
 
@@ -28,14 +26,7 @@ DATABASES = {
     },
 }
 
-"""
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-inclusive',
-]
-"""
 
-print "ROOO {}".format(DJANGO_ROOT)
-sys.path.append(DIRECTORY_ROOT)
-for paf in sys.path:
-    print "PATH {}".format(paf)
+NOSE_ARGS = [
+    #'--with-coverage',  # uncomment to run tests with coverage
+]

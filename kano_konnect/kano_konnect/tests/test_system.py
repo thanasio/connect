@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.utils.unittest.case import TestCase
+from django.test import Client, TestCase
 
 __author__ = 'rogueleaderr'
 
@@ -17,9 +17,9 @@ class HomepageSystemTest(TestCase):
         return
 
     def test_homepage(self):
-        url = reverse("homepage")
-        print "IM TESTING"
-        req = self.client.get(url)
+        url = reverse("home")
+        c = Client()
+        req = c.get(url)
         self.assertEqual(req.status_code, 200)
         self.assertTemplateUsed(req, "homepage.html")
         self.assertIn("Kano Konnect", req.content)

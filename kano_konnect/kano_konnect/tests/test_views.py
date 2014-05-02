@@ -1,8 +1,6 @@
 from django.test import RequestFactory, SimpleTestCase
-try:
-    from kano_konnect.views import home
-except ImportError:
-    import ipdb ; ipdb.set_trace()
+
+from views import home
 
 
 __author__ = 'rogueleaderr'
@@ -22,4 +20,4 @@ class HomepageTest(SimpleTestCase):
         response = home(request)
         # Check.
         self.assertEqual(response.status_code, 200)
-        self.assertIn(response.content, u'Kano Konnect')
+        self.assertIn(u'Kano Konnect', response.content)

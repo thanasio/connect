@@ -19,8 +19,7 @@ PRODUCTION = os.getenv("STAGING") == "False"
 
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
-#DJANGO_ROOT = dirname(dirname(abspath(__file__)))
-DJANGO_ROOT = dirname(dirname(dirname(abspath(__file__))))
+DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
 # Absolute filesystem path to the top-level project folder:
 SITE_ROOT = dirname(DJANGO_ROOT)
@@ -260,6 +259,6 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
 
 ## CELERY CONFIG##
-#CELERY_RESULT_BACKEND = 'amqp'
-#CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
+CELERY_RESULT_BACKEND = 'amqp'
+CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
 ## END CELERY CONFIG ##
