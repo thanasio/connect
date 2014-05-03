@@ -6,4 +6,4 @@ build
 *.tar.gz
 *~
 static
-
+log

@@ -100,8 +100,8 @@ MEDIA_URL = '/media/'
 
 ########## STATIC FILE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-##STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
-STATIC_ROOT = '/srv/kano_konnect_static'  ## Vernon
+STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
+#STATIC_ROOT = '/srv/kano_konnect_static'  ## Vernon
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
@@ -233,20 +233,37 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
-        }
+        },
+
     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+         'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': 'log/kano.log'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': True,
+        },
+         # Might as well log any errors anywhere else in Django
+        'django': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Your own app - this assumes all your logger names start with "myapp."
+        'kano': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG', # Or maybe INFO or DEBUG
+            'propagate': False
         },
     }
 }
@@ -262,3 +279,5 @@ WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 CELERY_RESULT_BACKEND = 'amqp'
 CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
 ## END CELERY CONFIG ##
+
+print "DEBUG: {}".format(DEBUG)

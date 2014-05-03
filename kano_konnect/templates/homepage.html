@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}Test Homepage{% endblock title %}
 
 {% block extra_css %}{% endblock extra_css %}
@@ -7,7 +9,7 @@
 {% block page_title %}Welcome to Kano Konnect.{% endblock page_title %}
 
 {% block content %}
-
+    <img style="padding: 30px" src="{% get_static_prefix %}img/eHealth_logo.png">
     <p>Here is the result of a celery test:</p>
     <p>{{ task_result }}</p>
 
