@@ -53,7 +53,7 @@ SERVER_EMAIL = EMAIL_HOST_USER
 #DATABASES = {}
 
 POSTGRES_PASS = os.getenv("POSTGRES_PASS")
-POSTGRES_IP = os.getenv("POSTGRES_IP")
+POSTGRES_IP = os.getenv("DATABASE_IP")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_USER = os.getenv("DATABASE_USER")
 # using postgres pool from https://github.com/kennethreitz/django-postgrespool
@@ -69,7 +69,7 @@ DATABASES = {
     }
 }
 ########## END DATABASE CONFIGURATION
-
+print DATABASES
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
