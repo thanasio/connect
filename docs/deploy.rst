@@ -22,6 +22,10 @@ listens to a Github webhook, and when a new build is pushed to the
 master repo, Jenkin runs the project test suite. If the test suite
 passes, Jenkins deploys the new commit to the live production server.
 
+#NGINX
 
+Change /etc/nginx/nginx.conf, set 
+
+user nobody;
 
 
