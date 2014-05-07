@@ -1,0 +1,9 @@
+*.pyc
+build
+/test_media
+/media
+*.bak
+*.tar.gz
+*~
+static
+
