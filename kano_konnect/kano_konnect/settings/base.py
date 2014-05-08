@@ -12,6 +12,7 @@ with open(os.path.join(DIRECTORY_ROOT, settings_file)) as settings_file:
     for k, v in json.load(settings_file).items():
         os.environ[k] = v
 
+
 # type safety!
 DEBUG = os.getenv("DEBUG") == "True"
 PRODUCTION = os.getenv("STAGING") == "False"
@@ -44,20 +45,19 @@ TEMPLATE_DEBUG = DEBUG
 ########## MANAGER CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ('Your Name', 'your_email@example.com'),
+    ('George London', 'george.j.london@gmail.com'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 ########## END MANAGER CONFIGURATION
 
-
 ########## DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.',
-        'NAME': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': normpath(join(DJANGO_ROOT, 'default.db')),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -69,7 +69,7 @@ DATABASES = {
 
 ########## GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'Africa/Lagos'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = 'en-us'
@@ -90,7 +90,8 @@ USE_TZ = True
 
 ########## MEDIA CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
+##MEDIA_ROOT = normpath(join(SITE_ROOT, 'media'))
+MEDIA_ROOT = '/var/kano_konnect_media'  ## Vernon
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
@@ -100,6 +101,7 @@ MEDIA_URL = '/media/'
 ########## STATIC FILE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = normpath(join(SITE_ROOT, 'assets'))
+#STATIC_ROOT = '/srv/kano_konnect_static'  ## Vernon
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
@@ -120,7 +122,7 @@ STATICFILES_FINDERS = (
 ########## SECRET CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # Note: This key should only be used for development and testing.
-SECRET_KEY = r"!+y2*ik)74e!im)td8i!9rgq^64lf&hdm0gwfv^yprq3kbf&pa"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ########## END SECRET CONFIGURATION
 
 
@@ -210,6 +212,7 @@ THIRD_PARTY_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    "kano_konnect",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -230,20 +233,37 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
-        }
+        },
+
     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+         'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': 'log/kano.log'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': True,
+        },
+         # Might as well log any errors anywhere else in Django
+        'django': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Your own app - this assumes all your logger names start with "myapp."
+        'kano': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG', # Or maybe INFO or DEBUG
+            'propagate': False
         },
     }
 }
@@ -254,3 +274,10 @@ LOGGING = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 ########## END WSGI CONFIGURATION
+
+## CELERY CONFIG##
+CELERY_RESULT_BACKEND = 'amqp'
+CELERY_TASK_RESULT_EXPIRES = 18000  # 5 hours.
+## END CELERY CONFIG ##
+
+print "DEBUG: {}".format(DEBUG)

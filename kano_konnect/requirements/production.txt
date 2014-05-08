@@ -3,3 +3,5 @@
 -r base.txt
 
 uwsgi
+celery==3.1.11
+psycopg2==2.5.2

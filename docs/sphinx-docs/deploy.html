@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Deploy &mdash; kano_konnect 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="kano_konnect 0.1 documentation" href="index.html" />
+    <link rel="next" title="Testing" href="tests.html" />
+    <link rel="prev" title="Install" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tests.html" title="Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Install"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">kano_konnect 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="deploy">
+<h1>Deploy<a class="headerlink" href="#deploy" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="infrastructure-overview">
+<h2>Infrastructure Overview<a class="headerlink" href="#infrastructure-overview" title="Permalink to this headline">¶</a></h2>
+<p>The Kano-Konnect project runs in production on an EC2 micro instance
+in the eu-west-1 Availability zone. At present, the EC2 instance is named
+&#8220;kano-konnect-webserver&#8221;.</p>
+<p>The EC2 instance is part of a security group that exposes port 80 to
+the open internet. The deployment uses nginx as a reverse proxy to
+listen on port 80 and route requests from the open internet into a
+uWSGI webserver. The nginx reverse proxy also directly
+serves static files (images, CSS, etc.) out of a directory inside the
+main project repo.</p>
+<p>A uWSGI server runs the Django project code. We also run Celery
+workers to process asynchronous tasks (with tasks and results passed
+back and forth via a RabbitMQ server.)</p>
+<p>&lt;IN THE FUTURE&gt;
+Finally, an instance of JenkinsCI is running on the server. Jenkins
+listens to a Github webhook, and when a new build is pushed to the
+master repo, Jenkin runs the project test suite. If the test suite
+passes, Jenkins deploys the new commit to the live production server.
+&lt;/FUTURE&gt;</p>
+</div>
+<div class="section" id="project-code">
+<h2>Project code<a class="headerlink" href="#project-code" title="Permalink to this headline">¶</a></h2>
+<p>All project/Python code lives in the directory:</p>
+<div class="highlight-python"><div class="highlight"><pre>/srv/kano_konnect
+</pre></div>
+</div>
+<p>This directory contains three subdirectories:</p>
+<p><strong>releases</strong> &#8211; where the actual Python code lives. The live code is
+currently inside releases/kano_konnect. But more directories can be
+created here to allow testing of new major releases while still
+enabling rapid rollback. In the future, directories will be named a
+corresponding git commit hash.</p>
+<p><strong>shared</strong> &#8211; where any files that will be common to all releases should
+live. Currently, that mainly means the project virtualenv which is
+located at /srv/kano_konnect/shared/env</p>
+<p><strong>current</strong> &#8211; a symlink to the current, production code.</p>
+<div class="section" id="static-files">
+<h3>Static files<a class="headerlink" href="#static-files" title="Permalink to this headline">¶</a></h3>
+<p>Static files are served directly off the server from a file system directory via
+nginx (see below.)</p>
+<p>For ease of use, I track all the statics in Github and simply
+push/pull them to the server. So the static directory is inside the
+project repo (currently at
+/srv/kano_konnect/current/kano_konnect/assets/).</p>
+<p>This may not be best practice overall (git is not ideal for non-text
+files like images) but in my experience it works fine up to at least
+~100mb of static assets. And it makes the deployment process much
+simpler. Just make sure to run:</p>
+<div class="highlight-python"><div class="highlight"><pre>python manage.py collectstatic
+git add &lt;[asset directory]&gt;
+</pre></div>
+</div>
+<p>Before pushing commits to Github.</p>
+</div>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>Updating the production virtualenv is not yet automated. So if you add new
+packages to the project, you must install them manually. To do this,
+first make sure that the requirements file is updated (e.g. if you add
+a package via pip, make sure to add the corresponding package with
+version number to the requirements file.)</p>
+<p>Then run::</p>
+<div class="highlight-python"><div class="highlight"><pre>source /srv/kano_konnect/shared/env/bin/activate
+pip install -r requirements.txt
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="nginx">
+<h2>NGINX<a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h2>
+<p>The nginx server is configured by two key config files.</p>
+<p>The actual nginx server config is at:</p>
+<div class="highlight-python"><div class="highlight"><pre>/etc/nginx/nginx.conf
+</pre></div>
+</div>
+<p>And the kano-konnect site specific configuration is at:</p>
+<div class="highlight-python"><div class="highlight"><pre>/etc/nginx/sites-available/kano_konnect.conf
+</pre></div>
+</div>
+<p>(The site specific file is symlinked to
+/etc/nginx/sites-enabled/kano_konnect.conf to make nginx actually
+serve the site.)</p>
+<div class="section" id="the-key-stanzas-in-the-config-files-are">
+<h3>The key stanzas in the config files are:<a class="headerlink" href="#the-key-stanzas-in-the-config-files-are" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="in-kano-konnect-conf">
+<h4>In kano_konnect.conf:<a class="headerlink" href="#in-kano-konnect-conf" title="Permalink to this headline">¶</a></h4>
+<p><strong>location /static/ must point to the directory where static files live
+on the server (currently the &#8220;assets&#8221; directory).</strong></p>
+<p>Before pushing a commit to Github, you should collect static files
+(which will put everything into the assets directory.) Then when you
+pull on the server, the static assets will be pulled from Github and
+put in the right place.</p>
+<p><strong>location / must point to the socket or port that uUWGI is listening
+on.</strong></p>
+<p>Currently I have uWSGI running on port 9090. It may be somewhat
+faster to run on a unix socket but for a low traffic site the
+difference is likely to be immaterial. I&#8217;ll leave it as it is for now
+because it currently works fine.</p>
+<p>This can easily be changed if you have a preferred way to run uWSGI.</p>
+</div>
+<div class="section" id="in-nginx-conf">
+<h4>In nginx.conf:<a class="headerlink" href="#in-nginx-conf" title="Permalink to this headline">¶</a></h4>
+<p>The project repo is owned by the &#8220;nobody user&#8221; so nginx must run as
+&#8220;nobody&#8221;. This is accomplished by adding the line::</p>
+<div class="highlight-python"><div class="highlight"><pre>user nobody nogroup;
+</pre></div>
+</div>
+<p>to nginx.conf</p>
+</div>
+</div>
+</div>
+<div class="section" id="supervisor">
+<h2>Supervisor<a class="headerlink" href="#supervisor" title="Permalink to this headline">¶</a></h2>
+<p>The uWSGI process (and also Celery &#8211; see below) is managed by
+supervisor, a python process controller that gives a convenient way to
+keep the server process alive by restarting it if it crashes for some
+reason.</p>
+<p>Supervisor also gives a way to start/restart the uWSGI process from
+the commandline via the <em>supervisorctl</em> command, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo supervisorctl restart kano_konnect-uwsgi
+</pre></div>
+</div>
+<p>Supervisor needs to be told how to start the uWSGI and celery
+processes, and those instructions live at::</p>
+<div class="highlight-python"><div class="highlight"><pre>/etc/supervisor.d/kano_konnect-uwsgi.conf
+</pre></div>
+</div>
+<p>and:</p>
+<div class="highlight-python"><div class="highlight"><pre>/etc/supervisor.d/kano_konnect-celeryd.conf
+</pre></div>
+</div>
+<p>The key line in these files is::</p>
+<div class="highlight-python"><div class="highlight"><pre>command=/srv/kano_konnect/shared/env/bin/uwsgi --http :9090 --wsgi-file kano_konnect/kano_konnect/wsgi.py
+</pre></div>
+</div>
+<p>This line must specify exactly how the process would be started from
+the commandline. If you wish to change uWSGI to use a Unix socket (or
+an .ini file), you&#8217;ll need to edit this line.</p>
+<p>By default, supervisor routes all log output to the directory:</p>
+<div class="highlight-python"><div class="highlight"><pre>/var/log/supervisor/
+</pre></div>
+</div>
+<p>And creates one log file for the stdout and stderr of each managed
+process.</p>
+<p>If you edit supervisor config files, you must &#8220;reread&#8221; them with the
+command::</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo supervisorctl reread
+</pre></div>
+</div>
+<p>And then reload supervisor with::</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo supervisorctl reload
+</pre></div>
+</div>
+<p>You can also restart supervised processes with:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo supervisorctl restart [PROCESS_NAME]
+</pre></div>
+</div>
+</div>
+<div class="section" id="uwsgi">
+<h2>uWSGI<a class="headerlink" href="#uwsgi" title="Permalink to this headline">¶</a></h2>
+<p>The uWSGI configuration is currently very &#8220;off the shelf&#8221;. No .ini
+file is being used. If you wish to supply a .ini file, write one and
+edit the supervisor config file for uWSGi to include it via the
+command line command.</p>
+</div>
+<div class="section" id="celery">
+<h2>Celery<a class="headerlink" href="#celery" title="Permalink to this headline">¶</a></h2>
+<p>Celery is also managed by supervisor. The integration into Django is
+specified in the file:</p>
+<div class="highlight-python"><div class="highlight"><pre>/srv/kano_konnect/current/kano_konnect/kano_konnect/celery.py
+</pre></div>
+</div>
+<p>Tasks should be specified inside of the file::</p>
+<div class="highlight-python"><div class="highlight"><pre>/srv/kano_konnect/current/kano_konnect/kano_konnect/tasks.py
+</pre></div>
+</div>
+<p>On the server, Celery requires rabbitmq to be running. Rabbit should
+start when the server starts and run automatically, but if it ever
+crashes it can be restarted with::</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo service rabbitmq-server restart
+</pre></div>
+</div>
+</div>
+<div class="section" id="postgres">
+<h2>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h2>
+<p>Postgres is running as a service on the webserver. The &#8220;cluster&#8221;
+contains a database called &#8220;kano_konnect&#8221;. You can interact
+via psql by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo -u postgres psql
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-code">
+<h2>Updating code:<a class="headerlink" href="#updating-code" title="Permalink to this headline">¶</a></h2>
+<p>The CI integration is currently broken. So code must be updated
+manually.</p>
+<p>To update the repo, simply ssh into the server via something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>ssh -i ~/.ec2/kano-konnect-key.pem ubuntu@ec2-54-228-139-57.eu-west-1.compute.amazonaws.com
+</pre></div>
+</div>
+<p>Then do:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd /srv/kano_konnect/current
+sudo -u nobody git pull
+source /srv/kano_konnect/shared/env/bin/activate
+cd kano_konnect/
+# sync the database
+sudo -u nobody python manage.py syncdb --settings=kano_konnect.settings.production
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Deploy</a><ul>
+<li><a class="reference internal" href="#infrastructure-overview">Infrastructure Overview</a></li>
+<li><a class="reference internal" href="#project-code">Project code</a><ul>
+<li><a class="reference internal" href="#static-files">Static files</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nginx">NGINX</a><ul>
+<li><a class="reference internal" href="#the-key-stanzas-in-the-config-files-are">The key stanzas in the config files are:</a><ul>
+<li><a class="reference internal" href="#in-kano-konnect-conf">In kano_konnect.conf:</a></li>
+<li><a class="reference internal" href="#in-nginx-conf">In nginx.conf:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#supervisor">Supervisor</a></li>
+<li><a class="reference internal" href="#uwsgi">uWSGI</a></li>
+<li><a class="reference internal" href="#celery">Celery</a></li>
+<li><a class="reference internal" href="#postgres">Postgres</a></li>
+<li><a class="reference internal" href="#updating-code">Updating code:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Install</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tests.html"
+                        title="next chapter">Testing</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/deploy.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tests.html" title="Testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Install"
+             >previous</a> |</li>
+        <li><a href="index.html">kano_konnect 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, eHealth Africa.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

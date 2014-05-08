@@ -20,9 +20,9 @@ def get_env_setting(setting):
 
 ########## HOST CONFIGURATION
 # See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "ec2-54-228-139-57.eu-west-1.compute.amazonaws.com"]
 ########## END HOST CONFIGURATION
-
+"""
 ########## EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -48,11 +48,28 @@ EMAIL_USE_TLS = True
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = EMAIL_HOST_USER
 ########## END EMAIL CONFIGURATION
-
+"""
 ########## DATABASE CONFIGURATION
-DATABASES = {}
-########## END DATABASE CONFIGURATION
+#DATABASES = {}
 
+POSTGRES_PASS = os.getenv("POSTGRES_PASS")
+POSTGRES_IP = os.getenv("DATABASE_IP")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_USER = os.getenv("DATABASE_USER")
+# using postgres pool from https://github.com/kennethreitz/django-postgrespool
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2", # Add "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle".
+        "NAME": DATABASE_NAME, # Or path to database file if using sqlite3.
+        "USER": "postgres", # Not used with sqlite3.
+        "PASSWORD": POSTGRES_PASS, # Not used with sqlite3.
+        "HOST": POSTGRES_IP, # Set to empty string for localhost. Not used with sqlite3.
+        "PORT": "5432", # Set to empty string for default. Not used with sqlite3.
+    }
+}
+########## END DATABASE CONFIGURATION
+print DATABASES
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches

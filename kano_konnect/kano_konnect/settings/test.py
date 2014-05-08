@@ -1,10 +1,19 @@
 from base import *
 
+DEBUG = True
+
+## Apps for testing
+INSTALLED_APPS = (
+ 'django_nose',
+) + INSTALLED_APPS  # nose needs to be before South
+
+print INSTALLED_APPS
+## END apps
+
 ########## TEST SETTINGS
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
-TEST_DISCOVER_TOP_LEVEL = SITE_ROOT
-TEST_DISCOVER_ROOT = SITE_ROOT
-TEST_DISCOVER_PATTERN = "test_*.py"
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+
 ########## IN-MEMORY TEST DATABASE
 DATABASES = {
     "default": {
@@ -16,3 +25,8 @@ DATABASES = {
         "PORT": "",
     },
 }
+
+
+NOSE_ARGS = [
+    #'--with-coverage',  # uncomment to run tests with coverage
+]

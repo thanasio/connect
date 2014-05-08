@@ -2,3 +2,6 @@
 *.pyc
 variables.json
 */*.pyc
+*.db
+venv
+*.cfg
