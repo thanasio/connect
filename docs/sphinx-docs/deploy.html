@@ -155,7 +155,7 @@ because it currently works fine.</p>
 <div class="section" id="in-nginx-conf">
 <h4>In nginx.conf:<a class="headerlink" href="#in-nginx-conf" title="Permalink to this headline">¶</a></h4>
 <p>The project repo is owned by the &#8220;nobody user&#8221; so nginx must run as
-&#8220;nobody&#8221;. This is accomplished by adding the line::</p>
+&#8220;nobody&#8221;. This is accomplished by adding the line:</p>
 <div class="highlight-python"><div class="highlight"><pre>user nobody nogroup;
 </pre></div>
 </div>
@@ -175,7 +175,7 @@ the commandline via the <em>supervisorctl</em> command, e.g.:</p>
 </pre></div>
 </div>
 <p>Supervisor needs to be told how to start the uWSGI and celery
-processes, and those instructions live at::</p>
+processes, and those instructions live at:</p>
 <div class="highlight-python"><div class="highlight"><pre>/etc/supervisor.d/kano_konnect-uwsgi.conf
 </pre></div>
 </div>
@@ -183,7 +183,7 @@ processes, and those instructions live at::</p>
 <div class="highlight-python"><div class="highlight"><pre>/etc/supervisor.d/kano_konnect-celeryd.conf
 </pre></div>
 </div>
-<p>The key line in these files is::</p>
+<p>The key line in these files is:</p>
 <div class="highlight-python"><div class="highlight"><pre>command=/srv/kano_konnect/shared/env/bin/uwsgi --http :9090 --wsgi-file kano_konnect/kano_konnect/wsgi.py
 </pre></div>
 </div>
@@ -215,7 +215,10 @@ command::</p>
 <p>The uWSGI configuration is currently very &#8220;off the shelf&#8221;. No .ini
 file is being used. If you wish to supply a .ini file, write one and
 edit the supervisor config file for uWSGi to include it via the
-command line command.</p>
+command line command in:</p>
+<div class="highlight-python"><div class="highlight"><pre>/etc/supervisor.d/kano_konnect-uwsgi.conf
+</pre></div>
+</div>
 </div>
 <div class="section" id="celery">
 <h2>Celery<a class="headerlink" href="#celery" title="Permalink to this headline">¶</a></h2>
@@ -254,11 +257,15 @@ manually.</p>
 </div>
 <p>Then do:</p>
 <div class="highlight-python"><div class="highlight"><pre>cd /srv/kano_konnect/current
-sudo -u nobody git pull
+sudo -u nobody ./pull.sh  # github was giving me trouble with agent forwarding, so I added a deploy key for the nobody user
 source /srv/kano_konnect/shared/env/bin/activate
 cd kano_konnect/
 # sync the database
 sudo -u nobody python manage.py syncdb --settings=kano_konnect.settings.production
+</pre></div>
+</div>
+<p>Then restart the servers:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo supervisorctl restart all
 </pre></div>
 </div>
 </div>

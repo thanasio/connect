@@ -244,13 +244,13 @@ LOGGING = {
         },
          'logfile': {
             'class': 'logging.handlers.WatchedFileHandler',
-            'filename': 'log/kano.log'
+            'filename': os.path.join(DJANGO_ROOT, 'log/kano.log')
         },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': True,
         },
          # Might as well log any errors anywhere else in Django
