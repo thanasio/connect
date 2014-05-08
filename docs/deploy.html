@@ -344,7 +344,7 @@ ul.auto-toc {
 <div class="section" id="infrastructure-overview">
 <h1>Infrastructure Overview</h1>
 <p>The Kano-Konnect project runs in production on an EC2 micro instance
-in the EU-west-1 Availability zone. At present, the EC2 instance is named
+in the eu-west-1 Availability zone. At present, the EC2 instance is named
 &quot;kano-konnect-webserver&quot;.</p>
 <p>The EC2 instance is part of a security group that exposes port 80 to
 the open internet. The deployment uses nginx as a reverse proxy to
@@ -352,7 +352,7 @@ listen on port 80 and route requests from the open internet into a
 uWSGI webserver. The nginx reverse proxy also directly
 serves static files (images, CSS, etc.) out of a directory inside the
 main project repo.</p>
-<p>The uWSGI server runs the Django project code. We also run Celery
+<p>A uWSGI server runs the Django project code. We also run Celery
 workers to process asynchronous tasks (with tasks and results passed
 back and forth via a RabbitMQ server.)</p>
 <p>&lt;IN THE FUTURE&gt;
@@ -369,14 +369,14 @@ passes, Jenkins deploys the new commit to the live production server.
 /srv/kano_konnect
 </pre>
 <p>This directory contains three subdirectories:</p>
-<p><em>releases</em> -- where the actual Python code lives. The live code is
+<p><strong>releases</strong> -- where the actual Python code lives. The live code is
 current inside releases/kano_konnect. But more directories can be
 created here to allow testing of new major releases while still
 enabling rapid rollback.</p>
-<p><em>shared</em> -- where any files that will be common to all releases should
+<p><strong>shared</strong> -- where any files that will be common to all releases should
 live. Currently, that mainly means the project virtualenv which is
 located at /srv/kano_konnect/shared/env</p>
-<p><em>current</em> -- a symlink to the current, production code.</p>
+<p><strong>current</strong> -- a symlink to the current, production code.</p>
 <div class="section" id="static-files">
 <h2>Static files</h2>
 <p>Static files are served directly off the server from a directory via
@@ -448,8 +448,16 @@ user nobody nogroup;
 </div>
 </div>
 </div>
-<div class="section" id="uwsgi">
-<h1>uWSGI</h1>
+<div class="section" id="supervisor">
+<h1>Supervisor</h1>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">deploy.rst</tt>, line 133)</p>
+<p>Title underline too short.</p>
+<pre class="literal-block">
+Supervisor
+-----
+</pre>
+</div>
 <p>The uWSGI process (and also Celery -- see below) is managed by
 supervisor, a python process controller that gives a convenient way to
 keep the server process alive by restarting it if it crashes for some
@@ -495,7 +503,7 @@ sudo supervisorctl reload
 sudo supervisorctl restart [PROCESS_NAME]
 </pre>
 </div>
-<div class="section" id="id1">
+<div class="section" id="uwsgi">
 <h1>uWSGI</h1>
 <p>The uWSGI configuration is currently very &quot;off the shelf&quot;. No .ini
 file is being used. If you wish to supply a .ini file, write one and

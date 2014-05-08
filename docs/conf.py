@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'kano_konnect'
-copyright = u'2013, ChangeMyName'
+copyright = u'2014, eHealth Africa'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -214,7 +214,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'kano_konnect', u'kano_konnect Documentation',
-     [u'ChangeToMyName'], 1)
+     [u'George'], 1)
 ]
 
 # If true, show URL addresses after external links.
