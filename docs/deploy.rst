@@ -238,8 +238,12 @@ To update the repo, simply ssh into the server via something like::
 Then do::
 
   cd /srv/kano_konnect/current
-  sudo -u nobody git pull
+  sudo -u nobody ./pull.sh  # github was giving me trouble with agent forwarding, so I added a deploy key for the nobody user
   source /srv/kano_konnect/shared/env/bin/activate
   cd kano_konnect/
   # sync the database
   sudo -u nobody python manage.py syncdb --settings=kano_konnect.settings.production
+
+Then restart the servers::
+
+    sudo supervisorctl restart all

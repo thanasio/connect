@@ -129,7 +129,7 @@ In nginx.conf:
 &&&&&&&&&&&&&&
 
 The project repo is owned by the "nobody user" so nginx must run as
-"nobody". This is accomplished by adding the line:::
+"nobody". This is accomplished by adding the line::
 
   user nobody nogroup;
 
@@ -149,7 +149,7 @@ the commandline via the *supervisorctl* command, e.g.::
   sudo supervisorctl restart kano_konnect-uwsgi
 
 Supervisor needs to be told how to start the uWSGI and celery
-processes, and those instructions live at:::
+processes, and those instructions live at::
 
   /etc/supervisor.d/kano_konnect-uwsgi.conf
 
@@ -158,7 +158,7 @@ and::
   /etc/supervisor.d/kano_konnect-celeryd.conf
 
 
-The key line in these files is:::
+The key line in these files is::
   
   command=/srv/kano_konnect/shared/env/bin/uwsgi --http :9090 --wsgi-file kano_konnect/kano_konnect/wsgi.py
 
@@ -193,7 +193,9 @@ uWSGI
 The uWSGI configuration is currently very "off the shelf". No .ini
 file is being used. If you wish to supply a .ini file, write one and
 edit the supervisor config file for uWSGi to include it via the
-command line command.
+command line command in::
+
+  /etc/supervisor.d/kano_konnect-uwsgi.conf
 
 Celery
 ------
@@ -236,8 +238,12 @@ To update the repo, simply ssh into the server via something like::
 Then do::
 
   cd /srv/kano_konnect/current
-  sudo -u nobody git pull
+  sudo -u nobody ./pull.sh  # github was giving me trouble with agent forwarding, so I added a deploy key for the nobody user
   source /srv/kano_konnect/shared/env/bin/activate
   cd kano_konnect/
   # sync the database
   sudo -u nobody python manage.py syncdb --settings=kano_konnect.settings.production
+
+Then restart the servers::
+
+    sudo supervisorctl restart all
