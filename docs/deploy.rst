@@ -140,7 +140,7 @@ Supervisor
 
 The uWSGI process (and also Celery -- see below) is managed by
 supervisor, a python process controller that gives a convenient way to
-keep the server process alive by restarting it if it crashes for some
+keep the server process alive by restarting it automatically if it crashes for some
 reason.
 
 Supervisor also gives a way to start/restart the uWSGI process from

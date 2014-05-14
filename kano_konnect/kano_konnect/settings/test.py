@@ -12,7 +12,7 @@ print INSTALLED_APPS
 
 ########## TEST SETTINGS
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
+SECRET_KEY = os.getenv("SECRET_KEY", "$testing_key$")
 
 ########## IN-MEMORY TEST DATABASE
 DATABASES = {
