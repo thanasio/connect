@@ -34,6 +34,7 @@ NOSE_ARGS = [
 JENKINS_TASKS = (
     'django_jenkins.tasks.run_pylint',
     'django_jenkins.tasks.with_coverage',
+    'django_jenkins.tasks.with_local_celery',
 )
 
 PROJECT_APPS = LOCAL_APPS
