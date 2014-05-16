@@ -5,3 +5,4 @@ variables.json
 *.db
 venv
 *.cfg
+reports
