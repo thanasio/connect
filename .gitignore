@@ -1,8 +1,11 @@
 .idea/*
 *.pyc
+*.pyo
 variables.json
 */*.pyc
 *.db
 venv
 *.cfg
 reports
+__pycache__
+db.sqlite3
