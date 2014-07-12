@@ -36,9 +36,9 @@ CACHES = {
 ########## TOOLBAR CONFIGURATION
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
 INSTALLED_APPS += (
+    'fm',
 #    'debug_toolbar',
 #    "django_extensions",
-    'fm',
 )
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
@@ -61,7 +61,6 @@ TEST_DISCOVER_TOP_LEVEL = SITE_ROOT
 TEST_DISCOVER_ROOT = SITE_ROOT
 TEST_DISCOVER_PATTERN = "test_*.py"
 
-
 # Added by Tomasz to plug FM in
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_DIR = os.path.abspath(os.path.join(BASE_DIR, '..'))
@@ -72,3 +71,4 @@ FIXTURE_DIRS += (
 #    'debug_toolbar',
 #    "django_extensions",
 #    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#TEST_RUNNER = 'discover_runner.DiscoverRunner'
