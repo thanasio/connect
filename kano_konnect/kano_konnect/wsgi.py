@@ -24,6 +24,7 @@ path.append(SITE_ROOT)
 # if running multiple sites in the same mod_wsgi process. To fix this, use
 # mod_wsgi daemon mode with each site in its own daemon process, or use
 # os.environ["DJANGO_SETTINGS_MODULE"] = "jajaja.settings"
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kano_konnect.settings.production")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kano_konnect.settings.production")
 
 # This application object is used by any WSGI server configured to use this

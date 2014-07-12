@@ -5,7 +5,6 @@ DEBUG = True
 ## Apps for testing
 INSTALLED_APPS = (
  'django_nose',
- "django_jenkins",
 ) + INSTALLED_APPS  # nose needs to be before South
 
 print INSTALLED_APPS
@@ -27,14 +26,7 @@ DATABASES = {
     },
 }
 
+
 NOSE_ARGS = [
     #'--with-coverage',  # uncomment to run tests with coverage
 ]
-
-JENKINS_TASKS = (
-    'django_jenkins.tasks.run_pylint',
-    'django_jenkins.tasks.with_coverage',
-    'django_jenkins.tasks.with_local_celery',
-)
-
-PROJECT_APPS = LOCAL_APPS

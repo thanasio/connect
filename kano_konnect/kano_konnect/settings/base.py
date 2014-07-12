@@ -127,15 +127,18 @@ STATICFILES_FINDERS = (
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # Note: This key should only be used for development and testing.
 SECRET_KEY = os.getenv("SECRET_KEY", "")
-SECRET_KEY = 'e+9^hg&g***==b7!+%xfds)w1y(u68m9ax$10+ji2gkgqy_oz_' 
-
 ########## END SECRET CONFIGURATION
 
 
 ########## SITE CONFIGURATION
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+#                 '*',
+                 '54.220.252.49',
+                 'connect.ehealth.org.ng',
+                 '127.0.0.1',
+                ]
 ########## END SITE CONFIGURATION
 
 
@@ -214,13 +217,11 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     # Database migration helpers:
     'south',
-
-
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
-    "kano_konnect",
+    "fm",
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
